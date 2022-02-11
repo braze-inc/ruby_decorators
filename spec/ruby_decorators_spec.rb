@@ -88,6 +88,11 @@ describe RubyDecorators do
       "#{@greeting} #{arg1} #{arg2} #{block.call if block_given?}"
     end
 
+    +Batman
+    def hello_with_block_and_kwargs(arg1, arg2, opt:, &block)
+      "#{@greeting} #{arg1} #{arg2} opt:#{opt} #{block.call if block_given?}"
+    end
+
     +Catwoman.new('super', 'catwoman')
     def hello_super_catwoman
       @greeting
@@ -180,6 +185,10 @@ describe RubyDecorators do
 
     it "decorates a method with a block" do
       subject.hello_with_block('how are', 'you') { 'man?' }.must_equal 'hello batman how are you man?'
+    end
+
+    it "decorates a method with a block and kwargs" do
+      subject.hello_with_block_and_kwargs('how are', 'you', opt: 'optval') { 'man?' }.must_equal 'hello batman how are you opt:optval man?'
     end
 
     it "ignores undecorated methods" do

@@ -14,8 +14,8 @@ describe RubyDecorators do
   end
 
   class Batman < RubyDecorator
-    def call(this, *args, &blk)
-      this.call(*args, &blk).sub('world', 'batman')
+    def call(this, *args, **kwargs, &blk)
+      this.call(*args, **kwargs, &blk).sub('world', 'batman')
     end
   end
 

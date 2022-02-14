@@ -12,7 +12,7 @@ module RubyDecorators
 
     private
 
-    def resolve_method(method_name, args, klass:, &blk)
+    def resolve_method(method_name, args, kwargs, klass:, &blk)
       decorators = nil
       method = nil
       klass.ancestors.each do |klass|
@@ -27,8 +27,8 @@ module RubyDecorators
 
       decorators.inject(method.bind(self)) do |method, decorator|
         decorator = decorator.new if decorator.respond_to?(:new)
-        lambda { |*a, &b| decorator.call(method, *a, &b) }
-      end.call(*args, &blk)
+        lambda { |*a, **kw, &b| decorator.call(method, *a, **kw, &b) }
+      end.call(*args, **kwargs, &blk)
     end
   end
 
@@ -52,8 +52,8 @@ module RubyDecorators
 
     class_eval <<-RUBY_EVAL, __FILE__, __LINE__ + 1
       #{method_visibility_for(method_name)}
-      def #{method_name}(*args, &blk)
-        resolve_method(:#{method_name}, args, klass: #{self}, &blk)
+      def #{method_name}(*args, **kwargs, &blk)
+        resolve_method(:#{method_name}, args, kwargs, klass: #{self}, &blk)
       end
     RUBY_EVAL
   end
